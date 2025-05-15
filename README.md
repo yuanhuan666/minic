@@ -9,9 +9,10 @@
 3. 函数内支持int类型的局部变量定义，不必在语句块的开头；
 4. 支持赋值语句，不支持连续赋值；
 5. 支持语句块；
-6. 表达式支持加减、函数调用、带括号的运算；
-7. 支持内置函数putint，通过它可在终端显示对应的十进制值；
-8. 变量可重名，支持变量分层管理。
+6. 表达式支持加、减、乘、除、取模运算，一元负号运算，函数调用以及带括号的运算；
+7. 支持十进制、八进制（0开头）和十六进制（0x或0X开头）整数字面量；
+8. 支持内置函数putint，通过它可在终端显示对应的十进制值；
+9. 变量可重名，支持变量分层管理。
 
 源代码位置：<https://github.com/NPUCompiler/exp03-minic-expr.git>
 
@@ -68,17 +69,23 @@ statement:
     | block                             # blockStatement
     | expr? T_SEMICOLON                 # expressionStatement;
 
-// 表达式文法 expr : AddExp 表达式目前只支持加法与减法运算
+// 表达式文法 expr : AddExp 表达式支持加、减、乘、除、取模等运算
 expr: addExp;
 
 // 加减表达式
-addExp: unaryExp (addOp unaryExp)*;
+addExp: mulExp (addOp mulExp)*;
 
 // 加减运算符
 addOp: T_ADD | T_SUB;
 
+// 乘除模表达式
+mulExp: unaryExp (mulOp unaryExp)*;
+
+// 乘除模运算符
+mulOp: T_MUL | T_DIV | T_MOD;
+
 // 一元表达式
-unaryExp: primaryExp | T_ID T_L_PAREN realParamList? T_R_PAREN;
+unaryExp: primaryExp | T_ID T_L_PAREN realParamList? T_R_PAREN | T_SUB unaryExp;
 
 // 基本表达式：括号表达式、整数、左值表达式
 primaryExp: T_L_PAREN expr T_R_PAREN | T_DIGIT | lVal;
@@ -102,6 +109,9 @@ T_COMMA: ',';
 
 T_ADD: '+';
 T_SUB: '-';
+T_MUL: '*';
+T_DIV: '/';
+T_MOD: '%';
 
 // 要注意关键字同样也属于T_ID，因此必须放在T_ID的前面，否则会识别成T_ID
 T_RETURN: 'return';
@@ -109,7 +119,12 @@ T_INT: 'int';
 T_VOID: 'void';
 
 T_ID: [a-zA-Z_][a-zA-Z0-9_]*;
-T_DIGIT: '0' | [1-9][0-9]*;
+T_DIGIT:
+    '0' [xX] [0-9a-fA-F]+    // 16进制数 (0x或0X开头)
+  | '0' [0-7]+               // 8进制数 (0开头)
+  | '0'                      // 单独的0
+  | [1-9][0-9]*              // 10进制数
+  ;
 
 /* 空白符丢弃 */
 WS: [ \r\n\t]+ -> skip;

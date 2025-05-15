@@ -49,6 +49,9 @@ InstSelectorArm32::InstSelectorArm32(vector<Instruction *> & _irCode,
 
     translator_handlers[IRInstOperator::IRINST_OP_ADD_I] = &InstSelectorArm32::translate_add_int32;
     translator_handlers[IRInstOperator::IRINST_OP_SUB_I] = &InstSelectorArm32::translate_sub_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_MUL_I] = &InstSelectorArm32::translate_mul_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_DIV_I] = &InstSelectorArm32::translate_div_int32;
+    translator_handlers[IRInstOperator::IRINST_OP_MOD_I] = &InstSelectorArm32::translate_mod_int32;
 
     translator_handlers[IRInstOperator::IRINST_OP_FUNC_CALL] = &InstSelectorArm32::translate_call;
     translator_handlers[IRInstOperator::IRINST_OP_ARG] = &InstSelectorArm32::translate_arg;
@@ -301,6 +304,68 @@ void InstSelectorArm32::translate_add_int32(Instruction * inst)
 void InstSelectorArm32::translate_sub_int32(Instruction * inst)
 {
     translate_two_operator(inst, "sub");
+}
+
+/// @brief 整数乘法指令翻译成ARM32汇编
+/// @param inst IR指令
+void InstSelectorArm32::translate_mul_int32(Instruction * inst)
+{
+    translate_two_operator(inst, "mul");
+}
+
+/// @brief 整数除法指令翻译成ARM32汇编
+/// @param inst IR指令
+void InstSelectorArm32::translate_div_int32(Instruction * inst)
+{
+    translate_two_operator(inst, "sdiv");
+}
+
+/// @brief 整数求余指令翻译成ARM32汇编
+/// @param inst IR指令
+void InstSelectorArm32::translate_mod_int32(Instruction * inst)
+{
+    // ARM中没有直接的求余指令，需要使用除法和乘法来实现：a % b = a - (a / b) * b
+    Value * result = inst;
+    Value * a = inst->getOperand(0);  // 被除数
+    Value * b = inst->getOperand(1);  // 除数
+    
+    int32_t a_reg_no = simpleRegisterAllocator.Allocate(a);
+    int32_t b_reg_no = simpleRegisterAllocator.Allocate(b);
+    int32_t result_reg_no = simpleRegisterAllocator.Allocate(result);
+    int32_t temp_reg_no = simpleRegisterAllocator.Allocate();  // 临时寄存器用于存储 (a / b)
+    
+    // 加载a和b到寄存器
+    iloc.load_var(a_reg_no, a);
+    iloc.load_var(b_reg_no, b);
+    
+    // 计算 a / b，存储到临时寄存器
+    iloc.inst("sdiv", 
+              PlatformArm32::regName[temp_reg_no], 
+              PlatformArm32::regName[a_reg_no],
+              PlatformArm32::regName[b_reg_no]);
+    
+    // 计算 (a / b) * b
+    iloc.inst("mul",
+              PlatformArm32::regName[temp_reg_no],
+              PlatformArm32::regName[temp_reg_no],
+              PlatformArm32::regName[b_reg_no]);
+    
+    // 计算 a - (a / b) * b
+    iloc.inst("sub",
+              PlatformArm32::regName[result_reg_no],
+              PlatformArm32::regName[a_reg_no],
+              PlatformArm32::regName[temp_reg_no]);
+    
+    // 如果结果不是寄存器变量，则保存到内存
+    if (inst->getRegId() == -1) {
+        iloc.store_var(result_reg_no, result, ARM32_TMP_REG_NO);
+    }
+    
+    // 释放寄存器
+    simpleRegisterAllocator.free(a);
+    simpleRegisterAllocator.free(b);
+    simpleRegisterAllocator.free(result);
+    simpleRegisterAllocator.free(temp_reg_no);
 }
 
 /// @brief 函数调用指令翻译成ARM32汇编

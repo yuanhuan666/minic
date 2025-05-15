@@ -72,6 +72,18 @@ string getNodeName(ast_node * astnode)
         case ast_operator_type::AST_OP_SUB:
             nodeName = "-";
             break;
+        case ast_operator_type::AST_OP_MUL:
+            nodeName = "*";
+            break;
+        case ast_operator_type::AST_OP_DIV:
+            nodeName = "/";
+            break;
+        case ast_operator_type::AST_OP_MOD:
+            nodeName = "%";
+            break;
+        case ast_operator_type::AST_OP_NEG:
+            nodeName = "-";
+            break;
         case ast_operator_type::AST_OP_ASSIGN:
             nodeName = "=";
             break;

@@ -47,6 +47,10 @@ IRGenerator::IRGenerator(ast_node * _root, Module * _module) : root(_root), modu
     /* 表达式运算， 加减 */
     ast2ir_handlers[ast_operator_type::AST_OP_SUB] = &IRGenerator::ir_sub;
     ast2ir_handlers[ast_operator_type::AST_OP_ADD] = &IRGenerator::ir_add;
+    ast2ir_handlers[ast_operator_type::AST_OP_NEG] = &IRGenerator::ir_neg;
+    ast2ir_handlers[ast_operator_type::AST_OP_MUL] = &IRGenerator::ir_mul;
+    ast2ir_handlers[ast_operator_type::AST_OP_DIV] = &IRGenerator::ir_div;
+    ast2ir_handlers[ast_operator_type::AST_OP_MOD] = &IRGenerator::ir_mod;
 
     /* 语句 */
     ast2ir_handlers[ast_operator_type::AST_OP_ASSIGN] = &IRGenerator::ir_assign;
@@ -455,6 +459,39 @@ bool IRGenerator::ir_sub(ast_node * node)
     return true;
 }
 
+/// @brief 整数求负AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_neg(ast_node * node)
+{
+    ast_node * expr_node = node->sons[0];
+
+    // 求负节点，先计算表达式节点
+    ast_node * expr = ir_visit_ast_node(expr_node);
+    if (!expr) {
+        // 表达式计算失败
+        return false;
+    }
+
+    // 创建常数0
+    ConstInt * zero = module->newConstInt(0);
+
+    // 创建减法指令：0 - expr
+    BinaryInstruction * negInst = new BinaryInstruction(module->getCurrentFunction(),
+                                                      IRInstOperator::IRINST_OP_SUB_I,
+                                                      zero,
+                                                      expr->val,
+                                                      IntegerType::getTypeInt());
+
+    // 添加指令到节点
+    node->blockInsts.addInst(expr->blockInsts);
+    node->blockInsts.addInst(negInst);
+
+    node->val = negInst;
+
+    return true;
+}
+
 /// @brief 赋值AST节点翻译成线性中间IR
 /// @param node AST节点
 /// @return 翻译是否成功，true：成功，false：失败
@@ -611,6 +648,105 @@ bool IRGenerator::ir_variable_declare(ast_node * node)
     // TODO 这里可强化类型等检查
 
     node->val = module->newVarValue(node->sons[0]->type, node->sons[1]->name);
+
+    return true;
+}
+
+/// @brief 整数乘法AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_mul(ast_node * node)
+{
+    ast_node * son1_node = node->sons[0];
+    ast_node * son2_node = node->sons[1];
+
+    ast_node * left = ir_visit_ast_node(son1_node);
+    if (!left) {
+        return false;
+    }
+
+    ast_node * right = ir_visit_ast_node(son2_node);
+    if (!right) {
+        return false;
+    }
+
+    BinaryInstruction * mulInst = new BinaryInstruction(module->getCurrentFunction(),
+                                                      IRInstOperator::IRINST_OP_MUL_I,
+                                                      left->val,
+                                                      right->val,
+                                                      IntegerType::getTypeInt());
+
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+    node->blockInsts.addInst(mulInst);
+
+    node->val = mulInst;
+
+    return true;
+}
+
+/// @brief 整数除法AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_div(ast_node * node)
+{
+    ast_node * son1_node = node->sons[0];
+    ast_node * son2_node = node->sons[1];
+
+    ast_node * left = ir_visit_ast_node(son1_node);
+    if (!left) {
+        return false;
+    }
+
+    ast_node * right = ir_visit_ast_node(son2_node);
+    if (!right) {
+        return false;
+    }
+
+    BinaryInstruction * divInst = new BinaryInstruction(module->getCurrentFunction(),
+                                                      IRInstOperator::IRINST_OP_DIV_I,
+                                                      left->val,
+                                                      right->val,
+                                                      IntegerType::getTypeInt());
+
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+    node->blockInsts.addInst(divInst);
+
+    node->val = divInst;
+
+    return true;
+}
+
+/// @brief 整数求余AST节点翻译成线性中间IR
+/// @param node AST节点
+/// @return 翻译是否成功，true：成功，false：失败
+bool IRGenerator::ir_mod(ast_node * node)
+{
+    ast_node * son1_node = node->sons[0];
+    ast_node * son2_node = node->sons[1];
+
+    ast_node * left = ir_visit_ast_node(son1_node);
+    if (!left) {
+        return false;
+    }
+
+    ast_node * right = ir_visit_ast_node(son2_node);
+    if (!right) {
+        return false;
+    }
+
+    BinaryInstruction * modInst = new BinaryInstruction(module->getCurrentFunction(),
+                                                      IRInstOperator::IRINST_OP_MOD_I,
+                                                      left->val,
+                                                      right->val,
+                                                      IntegerType::getTypeInt());
+
+    node->blockInsts.addInst(left->blockInsts);
+    node->blockInsts.addInst(right->blockInsts);
+    node->blockInsts.addInst(modInst);
+
+    node->val = modInst;
 
     return true;
 }
