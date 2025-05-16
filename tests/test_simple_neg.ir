@@ -1,0 +1,13 @@
+define i32 @main()
+{
+	declare i32 %l0
+	declare i32 %l1 ; 1:a
+	declare i32 %t2
+	entry
+	%l1 = 5
+	%t2 = sub 0,%l1
+	%l0 = %t2
+	br label .L3
+.L3:
+	exit %l0
+}

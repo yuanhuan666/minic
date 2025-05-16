@@ -1,0 +1,83 @@
+define i32 @main()
+{
+	declare i32 %l0
+	declare i32 %l1 ; 1:a
+	declare i32 %l2 ; 1:b
+	declare i32 %l3 ; 1:c
+	declare i32 %l4 ; 1:d
+	declare i32 %l5 ; 1:r1
+	declare i32 %l6 ; 1:r2
+	declare i32 %l7 ; 1:r3
+	declare i32 %l8 ; 1:r4
+	declare i32 %l9 ; 1:r5
+	declare i32 %l10 ; 1:r6
+	declare i32 %l11 ; 1:r7
+	declare i32 %l12 ; 1:r8
+	declare i32 %l13 ; 1:r9
+	declare i32 %l14 ; 1:r10
+	declare i32 %t15
+	declare i32 %t16
+	declare i32 %t17
+	declare i32 %t18
+	declare i32 %t19
+	declare i32 %t20
+	declare i32 %t21
+	declare i32 %t22
+	declare i32 %t23
+	declare i32 %t24
+	declare i32 %t25
+	declare i32 %t26
+	declare i32 %t27
+	declare i32 %t28
+	declare i32 %t29
+	declare i32 %t30
+	entry
+	%l1 = 10
+	%l2 = 5
+	%l3 = 26
+	%l4 = 15
+	%t15 = add %l1,%l2
+	%l5 = %t15
+	%t16 = sub %l1,%l2
+	%l6 = %t16
+	%t17 = mul %l1,%l2
+	%l7 = %t17
+	%t18 = div %l1,%l2
+	%l8 = %t18
+	%t19 = mod %l1,%l2
+	%l9 = %t19
+	%t20 = sub 0,%l1
+	%l10 = %t20
+	%t21 = sub 0,%l3
+	%l11 = %t21
+	%t22 = mul %l3,%l4
+	%t23 = add %t22,%l10
+	%l12 = %t23
+	%t24 = div %l3,%l2
+	%t25 = sub %l4,%t24
+	%l13 = %t25
+	%t26 = add %l1,%l2
+	%t27 = mod %l3,%l4
+	%t28 = mul %t26,%t27
+	%t29 = sub %l1,%l2
+	%t30 = div %t28,%t29
+	%l14 = %t30
+	call void @putint(i32 %l1)
+	call void @putint(i32 %l2)
+	call void @putint(i32 %l3)
+	call void @putint(i32 %l4)
+	call void @putint(i32 %l5)
+	call void @putint(i32 %l6)
+	call void @putint(i32 %l7)
+	call void @putint(i32 %l8)
+	call void @putint(i32 %l9)
+	call void @putint(i32 %l10)
+	call void @putint(i32 %l11)
+	call void @putint(i32 %l12)
+	call void @putint(i32 %l13)
+	call void @putint(i32 %l14)
+	%l0 = 0
+	br label .L31
+.L31:
+	exit %l0
+}

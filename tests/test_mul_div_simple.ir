@@ -1,0 +1,32 @@
+define i32 @main()
+{
+	declare i32 %l0
+	declare i32 %l1 ; 1:a
+	declare i32 %l2 ; 1:b
+	declare i32 %l3 ; 1:c
+	declare i32 %l4 ; 1:d
+	declare i32 %l5 ; 1:e
+	declare i32 %t6
+	declare i32 %t7
+	declare i32 %t8
+	declare i32 %t9
+	declare i32 %t10
+	entry
+	%l1 = 10
+	%l2 = 5
+	%t6 = mul %l1,%l2
+	%l3 = %t6
+	%t7 = div %l3,%l2
+	%l4 = %t7
+	%t8 = mul 3,4
+	%t9 = add 2,%t8
+	%l5 = %t9
+	call void @putint(i32 %l3)
+	call void @putint(i32 %l4)
+	call void @putint(i32 %l5)
+	%t10 = add %l3,%l4
+	%l0 = %t10
+	br label .L11
+.L11:
+	exit %l0
+}
