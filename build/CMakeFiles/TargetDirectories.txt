@@ -1,0 +1,9 @@
+/root/work/exp04-minic-expr/build/CMakeFiles/minic.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/package.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/package_source.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/edit_cache.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/rebuild_cache.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/list_install_components.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/install.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/install/local.dir
+/root/work/exp04-minic-expr/build/CMakeFiles/install/strip.dir
