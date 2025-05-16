@@ -1,0 +1,9 @@
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/minic.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/package.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/package_source.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/edit_cache.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/rebuild_cache.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/list_install_components.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/install.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/install/local.dir
+/root/work/exp04-minic-expr/cmake-build-debug-wsl/CMakeFiles/install/strip.dir
