@@ -101,6 +101,27 @@ enum class ast_operator_type : int {
     /// @brief 二元运算符%（求余）
     AST_OP_MOD,
 
+    /// @brief 关系运算符<（小于）
+    AST_OP_LT,
+
+    /// @brief 关系运算符>（大于）
+    AST_OP_GT,
+
+    /// @brief 关系运算符<=（小于等于）
+    AST_OP_LE,
+
+    /// @brief 关系运算符>=（大于等于）
+    AST_OP_GE,
+
+    /// @brief 关系运算符==（等于）
+    AST_OP_EQ,
+
+    /// @brief 关系运算符!=（不等于）
+    AST_OP_NE,
+
+    /// @brief 未知运算符
+    AST_OP_UNKNOWN,
+
     // TODO 抽象语法树其它内部节点运算符追加
 
     /// @brief 最大标识符，表示非法运算符

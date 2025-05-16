@@ -78,6 +78,20 @@ protected:
     std::any visitExpr(MiniCParser::ExprContext * ctx) override;
 
     ///
+    /// @brief 非终结符relExp的分析
+    /// @param ctx CST上下文
+    /// @return std::any AST的节点
+    ///
+    std::any visitRelExp(MiniCParser::RelExpContext * ctx) override;
+
+    ///
+    /// @brief 非终结符relOp的分析
+    /// @param ctx CST上下文
+    /// @return std::any 类型
+    ///
+    std::any visitRelOp(MiniCParser::RelOpContext * ctx) override;
+
+    ///
     /// @brief 内部产生的非终结符assignStatement的分析
     /// @param ctx CST上下文
     /// @return std::any AST的节点

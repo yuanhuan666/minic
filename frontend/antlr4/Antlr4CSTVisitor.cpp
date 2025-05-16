@@ -193,9 +193,55 @@ std::any MiniCCSTVisitor::visitReturnStatement(MiniCParser::ReturnStatementConte
 /// @param ctx CST上下文
 std::any MiniCCSTVisitor::visitExpr(MiniCParser::ExprContext * ctx)
 {
-    // 识别产生式：expr: addExp;
+    // 识别产生式：expr: relExp;
 
-    return visitAddExp(ctx->addExp());
+    return visitRelExp(ctx->relExp());
+}
+
+/// @brief 非终结运算符relExp的遍历
+/// @param ctx CST上下文
+std::any MiniCCSTVisitor::visitRelExp(MiniCParser::RelExpContext * ctx)
+{
+    // 识别的文法产生式：relExp: addExp (relOp addExp)?;
+
+    if (ctx->relOp() == nullptr) {
+        // 没有关系运算符，只有加减表达式
+        return visitAddExp(ctx->addExp(0));
+    }
+
+    // 有关系运算符，先获取运算符
+    ast_operator_type op = std::any_cast<ast_operator_type>(visitRelOp(ctx->relOp()));
+
+    // 获取左右操作数
+    ast_node * left = std::any_cast<ast_node *>(visitAddExp(ctx->addExp(0)));
+    ast_node * right = std::any_cast<ast_node *>(visitAddExp(ctx->addExp(1)));
+
+    // 创建关系表达式节点
+    return ast_node::New(op, left, right, nullptr);
+}
+
+/// @brief 非终结运算符relOp的遍历
+/// @param ctx CST上下文
+std::any MiniCCSTVisitor::visitRelOp(MiniCParser::RelOpContext * ctx)
+{
+    // 识别的文法产生式：relOp: T_LT | T_GT | T_LE | T_GE | T_EQ | T_NE;
+
+    if (ctx->T_LT()) {
+        return ast_operator_type::AST_OP_LT;
+    } else if (ctx->T_GT()) {
+        return ast_operator_type::AST_OP_GT;
+    } else if (ctx->T_LE()) {
+        return ast_operator_type::AST_OP_LE;
+    } else if (ctx->T_GE()) {
+        return ast_operator_type::AST_OP_GE;
+    } else if (ctx->T_EQ()) {
+        return ast_operator_type::AST_OP_EQ;
+    } else if (ctx->T_NE()) {
+        return ast_operator_type::AST_OP_NE;
+    }
+
+    // 不应该到达这里
+    return ast_operator_type::AST_OP_UNKNOWN;
 }
 
 std::any MiniCCSTVisitor::visitAssignStatement(MiniCParser::AssignStatementContext * ctx)

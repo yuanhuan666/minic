@@ -41,8 +41,14 @@ statement:
 	| block								# blockStatement
 	| expr? T_SEMICOLON					# expressionStatement;
 
-// 表达式文法 expr : AddExp 表达式目前支持加减、乘除运算
-expr: addExp;
+// 表达式文法，新增支持关系表达式
+expr: relExp;
+
+// 关系表达式
+relExp: addExp (relOp addExp)?;
+
+// 关系运算符
+relOp: T_LT | T_GT | T_LE | T_GE | T_EQ | T_NE;
 
 // 加减表达式
 addExp: mulExp (addOp mulExp)*;
@@ -85,6 +91,14 @@ T_MUL: '*';
 T_DIV: '/';
 T_MOD: '%';
 
+// 关系运算符
+T_LT: '<';
+T_GT: '>';
+T_LE: '<=';
+T_GE: '>=';
+T_EQ: '==';
+T_NE: '!=';
+
 // 要注意关键字同样也属于T_ID，因此必须放在T_ID的前面，否则会识别成T_ID
 T_RETURN: 'return';
 T_INT: 'int';
@@ -92,6 +106,10 @@ T_VOID: 'void';
 
 T_ID: [a-zA-Z_][a-zA-Z0-9_]*;
 T_DIGIT: '0'[0-7]* | '0'[xX][0-9a-fA-F]+ | [1-9][0-9]*;
+
+/* 注释规则 */
+SINGLE_LINE_COMMENT: '//' ~[\r\n]* -> skip;
+MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
 
 /* 空白符丢弃 */
 WS: [ \r\n\t]+ -> skip;
